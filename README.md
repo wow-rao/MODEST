@@ -1,11 +1,11 @@
-# **MODEST: <u>Mo</u>nocular <u>D</u>epth <u>E</u>stimation and <u>S</u>egmentation for <u>T</u>ransparent Object (ICRA 2025)**
+# **MODEST: <ins>Mo</ins>nocular <ins>D</ins>epth <ins>E</ins>stimation and <ins>S</ins>egmentation for <ins>T</ins>ransparent Object (ICRA 2025)**
 
 This is the official repository of the ICRA 2025 paper "Monocular Depth Estimation and Segmentation for Transparent Object with Iterative Semantic and Geometric Fusion".
 
 ## Abstract
 
 Transparent object perception is indispensable for numerous robotic tasks. However, accurately segmenting and estimating the depth of transparent objects remain challenging due to complex optical properties. Existing methods primarily delve into only one task using extra inputs or specialized sensors, neglecting the valuable interactions among tasks and the subsequent refinement process, leading to suboptimal and blurry predictions. To address these issues, we propose a monocular framework, which is the first to excel in both segmentation and depth estimation of transparent objects, with only a single image input. Specifically, we devise a novel semantic and geometric fusion module, effectively integrating the multi-scale information between tasks. In addition, drawing inspiration from human perception of objects, we further incorporate an iterative strategy, which progressively refines initial features for clearer results. Experiments on two challenging synthetic and real-world datasets demonstrate that our model surpasses state-of-the-art monocular, stereo, and multi-view methods by a large margin of about 38.8%-46.2% with only a single RGB input.
-
+![](https://github.com/L-J-Yuan/MODEST/blob/main/images/frame.png)
 ## Requirements
 
 We have tested on Ubuntu 20.04 with an NVIDIA GeForce RTX 4090 with Python 3.8 and cuda11.1. The code may work on other systems. 
