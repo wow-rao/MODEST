@@ -71,4 +71,13 @@ Our code is generally built upon [DPT](https://github.com/antocad/FocusOnDepth?t
 
 ## Citation
 
-Coming soon.
+If you find MODEST is useful in your research or applications, please consider citing it：
+
+```
+@article{liu2025monocular,
+  title={Monocular Depth Estimation and Segmentation for Transparent Object with Iterative Semantic and Geometric Fusion},
+  author={Liu, Jiangyuan and Ma, Hongxuan and Guo, Yuxin and Zhao, Yuhao and Zhang, Chi and Sui, Wei and Zou, Wei},
+  journal={arXiv preprint arXiv:2502.14616},
+  year={2025}
+}
+```
