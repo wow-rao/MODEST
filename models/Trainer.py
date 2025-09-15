@@ -6,7 +6,6 @@ import wandb
 import cv2
 import torch.nn.functional as F
 
-from torchvision import transforms
 from PIL import Image
 from tqdm import tqdm
 from numpy.core.numeric import Inf
@@ -379,7 +378,19 @@ class Trainer(object):
         self.model.eval()
 
         image = Image.open(image_path)
-        transform = transforms.Compose([
+
+        class CustomCompose:
+            def __init__(self, transforms):
+                # Store the list of transform objects
+                self.transforms = transforms
+
+            def __call__(self, image):
+                # Apply each transform in the list sequentially
+                for transform in self.transforms:
+                    image = transform(image)
+                return image
+        
+        transform = CustomCompose([
             transforms.Resize((384, 384)),
             transforms.ToTensor(),  
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  
