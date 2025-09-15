@@ -1,9 +1,39 @@
-import cv2
 import colour
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
+COLOR_BGR2RGB = 'BGR2RGB'
+COLOR_BGR2GRAY = 'BGR2GRAY'
+
+def add_weighted_numpy(src1, alpha, src2, beta, gamma):
+    # Ensure the arrays have the same shape
+    if src1.shape != src2.shape:
+        raise ValueError("Input images src1 and src2 must have the same shape.")
+
+    # Perform the weighted sum calculation.
+    # It's important to work with a float dtype for the calculation.
+    weighted_sum = src1.astype(np.float32) * alpha + src2.astype(np.float32) * beta + gamma
+    
+    # Clip the values to the valid range for an 8-bit image [0, 255]
+    blended_image = np.clip(weighted_sum, 0, 255)
+    
+    # Convert back to the original uint8 data type
+    return blended_image.astype(np.uint8)
+
+def convert_color(image, code):
+    if code == COLOR_BGR2RGB:
+        # BGR to RGB is just a reversal of the color channels
+        # The slice [..., ::-1] reverses the last dimension (channels)
+        return image[..., ::-1]       
+    elif code == COLOR_BGR2GRAY:
+        # The weights for B, G, R channels respectively
+        weights = np.array([0.114, 0.587, 0.299])        
+        # Calculate the dot product for the weighted sum and cast to uint8
+        return np.dot(image[..., :3], weights).astype(np.uint8)   
+    else:
+        # Raise an error for any unsupported conversion type
+        raise ValueError(f"Unsupported conversion code: {code}")
 
 def vis_error_map(depth_pred, depth_gt, type):
     colormap = plt.cm.Reds
@@ -58,7 +88,7 @@ def get_clearpose_colors():
 
 def color_img_to_gray(image):
   gray_scale_img = np.zeros(image.shape)
-  img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+  img = convert_color(image, COLOR_BGR2GRAY)
   for i in range(3):
     gray_scale_img[:, :, i] = img
   gray_scale_img[:, :, i] = img
@@ -76,10 +106,10 @@ def vis_seg_gt(seg, img, dataset_name):
         for ii, color in zip(range(3), colors):
             colored_mask_truths = np.zeros([seg_visual.shape[0], seg_visual.shape[1], 3])
             colored_mask_truths[seg_visual == ii, :] = color
-            color_img_truths = cv2.addWeighted(
+            color_img_truths = add_weighted_numpy(
                 color_img_truths.astype(np.uint8), 0.9, colored_mask_truths.astype(np.uint8), 0.4, 0
             )
-        return cv2.cvtColor(color_img_truths, cv2.COLOR_BGR2RGB)
+        return convert_color(color_img_truths, COLOR_BGR2RGB)
     elif dataset_name == "clearpose":
         colors = get_clearpose_colors()
         assert len(seg_visual.shape) == 2
@@ -88,10 +118,10 @@ def vis_seg_gt(seg, img, dataset_name):
         for ii, color in zip(range(2), colors):
             colored_mask_truths = np.zeros([seg_visual.shape[0], seg_visual.shape[1], 3])
             colored_mask_truths[seg_visual == ii, :] = color
-            color_img_truths = cv2.addWeighted(
+            color_img_truths = add_weighted_numpy(
                 color_img_truths.astype(np.uint8), 0.9, colored_mask_truths.astype(np.uint8), 0.4, 0
             )
-        return cv2.cvtColor(color_img_truths, cv2.COLOR_BGR2RGB)
+        return convert_color(color_img_truths, COLOR_BGR2RGB)
     else:
         seg_visual = ((seg_visual.astype(np.uint8)) * 255).astype(np.uint8)
         return seg_visual
@@ -109,10 +139,10 @@ def vis_seg(seg, img, dataset_name):
         for ii, color in zip(range(3), colors):
             colored_mask_preds = np.zeros([seg_visual.shape[0], seg_visual.shape[1], 3])
             colored_mask_preds[seg_visual == ii, :] = color
-            color_img_preds = cv2.addWeighted(
+            color_img_preds = add_weighted_numpy(
                 color_img_preds.astype(np.uint8), 0.9, colored_mask_preds.astype(np.uint8), 0.4, 0
             )
-        return cv2.cvtColor(color_img_preds, cv2.COLOR_BGR2RGB)
+        return convert_color(color_img_preds, COLOR_BGR2RGB)
     elif dataset_name == "clearpose":
         colors = get_clearpose_colors()
         assert len(seg_visual.shape) == 3
@@ -122,10 +152,10 @@ def vis_seg(seg, img, dataset_name):
         for ii, color in zip(range(2), colors):
             colored_mask_preds = np.zeros([seg_visual.shape[0], seg_visual.shape[1], 3])
             colored_mask_preds[seg_visual == ii, :] = color
-            color_img_preds = cv2.addWeighted(
+            color_img_preds = add_weighted_numpy(
                 color_img_preds.astype(np.uint8), 0.9, colored_mask_preds.astype(np.uint8), 0.4, 0
             )
-        return cv2.cvtColor(color_img_preds, cv2.COLOR_BGR2RGB)
+        return convert_color(color_img_preds, COLOR_BGR2RGB)
     else:
         seg_visual = (np.argmax(seg_visual, axis=0).astype(np.uint8) * 255).astype(np.uint8)
         return seg_visual
